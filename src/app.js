@@ -1,20 +1,51 @@
 import onChange from 'on-change';
 import * as yup from 'yup';
-import initView from './view.js';
+import i18next from 'i18next';
+import axios from 'axios';
 
-const schema = yup.string()
-  .url('Ссылка должна быть валидным URL')
-  .required('Ссылка должна быть валидным URL');
+import { renderContent, initView } from './view.js';
+import resources from './locales/index.js';
+import parserRSS from './utils/parser.js';
+
+const getAllOriginUrl = (url) => {
+  const originUrl = new URL('https://allorigins.hexlet.app/get');
+  originUrl.searchParams.set('disableCache', 'true');
+  originUrl.searchParams.set('url', url);
+  return originUrl;
+};
 
 export default () => {
+  const i18nInstance = i18next.createInstance();
+  i18nInstance.init({
+    lng: 'ru',
+    debug: false,
+    resources,
+  });
+
   const elements = {
     form: document.querySelector('.rss-form'),
     input: document.getElementById('url-input'),
     submit: document.querySelector('.btn-primary'),
     feedback: document.querySelector('.feedback'),
+    content: {
+      body: {
+        h_one: document.querySelector('h1[class="display-3 mb-0"]'),
+        p_lead: document.querySelector('p[class="lead"]'),
+        p_example: document.querySelector('p[class="mt-2 mb-0 text-muted"]'),
+        lable_url_input: document.querySelector('label[for="url-input"]'),
+        btn_primary: document.querySelector('button[aria-label="add"]'),
+      },
+      modal: {
+        btn_secondary: document.querySelector('button[class="btn btn-secondary"]'),
+        a_btn_primary: document.querySelector('a[class="btn btn-primary full-article"]'),
+      },
+      footer: {
+        a: document.querySelector('a[href$="11"]'),
+        div: document.querySelector('div[class="text-center"]'),
+      },
+    },
   };
 
-  // Model
   const initialState = {
     form: {
       fields: {
@@ -24,11 +55,23 @@ export default () => {
       processError: null,
       errors: {},
     },
-    feeds: new Set(),
+    urls: new Set(),
+    feeds: [],
+    posts: [],
   };
 
+  yup.setLocale({
+    string: {
+      url: () => ({ key: 'errors.invalidURL' }),
+    },
+    mixed: {
+      notOneOf: () => ({ key: 'errors.existingURL' }),
+    },
+  });
+
   // View
-  const state = onChange(initialState, initView(elements));
+  renderContent(elements, i18nInstance);
+  const state = onChange(initialState, initView(elements, i18nInstance));
 
   // Controllers
   elements.input.addEventListener('input', (e) => {
@@ -39,19 +82,27 @@ export default () => {
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const url = state.form.fields.input;
-    schema.validate(url.trim())
-      .then((data) => {
-        if (state.feeds.has(data)) {
-          state.form.errors = { message: 'RSS уже существует' };
-          return;
-        }
+
+    const schema = yup.string()
+      .url()
+      .notOneOf([...state.urls]);
+
+    const data = state.form.fields.input;
+    schema.validate(data)
+      .then((url) => {
         state.form.processState = 'sending';
-        state.feeds.add(data);
-        state.form.processState = 'success';
+        axios.get(getAllOriginUrl(url))
+          .then((response) => {
+            console.log(parserRSS(response.data.contents));
+          })
+          .then(() => {
+            state.form.processState = 'success';
+            state.urls.add(url);
+          })
+          .catch((error) => console.error(error));
       })
       .catch((error) => {
-        const { message } = error;
+        const message = error.errors.map((err) => i18nInstance.t(err.key));
         state.form.errors = { message };
       });
   });
