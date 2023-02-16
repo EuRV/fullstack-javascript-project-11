@@ -13,6 +13,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
+      title: 'RSS aggregatort',
       template: 'index.html',
     }),
   ],
