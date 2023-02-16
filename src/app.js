@@ -7,6 +7,20 @@ import { renderContent, initView } from './view.js';
 import resources from './locales/index.js';
 import parserRSS from './utils/parser.js';
 
+let count = 0;
+
+const getId = () => {
+  count += 1;
+  return count;
+};
+
+const idCounter = (currentID, posts) => posts
+  .map((post) => ({
+    id: getId(),
+    idFeed: currentID,
+    ...post,
+  }));
+
 const getAllOriginUrl = (url) => {
   const originUrl = new URL('https://allorigins.hexlet.app/get');
   originUrl.searchParams.set('disableCache', 'true');
@@ -25,7 +39,7 @@ export default () => {
   const elements = {
     form: document.querySelector('.rss-form'),
     input: document.getElementById('url-input'),
-    submit: document.querySelector('.btn-primary'),
+    submit: document.querySelector('button[aria-label="add"]'),
     feedback: document.querySelector('.feedback'),
     content: {
       body: {
@@ -43,6 +57,10 @@ export default () => {
         a: document.querySelector('a[href$="11"]'),
         div: document.querySelector('div[class="text-center"]'),
       },
+    },
+    rss: {
+      feeds: document.querySelector('.feeds'),
+      posts: document.querySelector('.posts'),
     },
   };
 
@@ -93,11 +111,18 @@ export default () => {
         state.form.processState = 'sending';
         axios.get(getAllOriginUrl(url))
           .then((response) => {
-            console.log(parserRSS(response.data.contents));
+            const { feed, posts } = parserRSS(response.data.contents);
+            feed.id = getId();
+            const postsID = idCounter(feed.id, posts);
+            return { feed, posts: postsID };
+          })
+          .then(({ feed, posts }) => {
+            state.urls.add(url);
+            state.feeds.push(feed);
+            state.posts.push(...posts);
           })
           .then(() => {
             state.form.processState = 'success';
-            state.urls.add(url);
           })
           .catch((error) => console.error(error));
       })
