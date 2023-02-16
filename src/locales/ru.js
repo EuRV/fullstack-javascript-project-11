@@ -13,6 +13,7 @@ export default {
         a_btn_primary: 'Читать полностью',
         feeds: 'Фиды',
         posts: 'Посты',
+        btn_modal: 'Просмотр',
       },
       footer: {
         a: 'Hexlet',
