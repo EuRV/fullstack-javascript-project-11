@@ -24,6 +24,8 @@ export default {
       invalidURL: 'Ссылка должна быть валидным URL',
       existingURL: 'RSS уже существует',
       successURL: 'RSS успешно загружен',
+      networkErrors: 'Ошибка сети',
+      noRSS: 'Ресурс не содержит валидный RSS',
     },
   },
 };
