@@ -21,11 +21,41 @@ const idCounter = (currentID, posts) => posts
     ...post,
   }));
 
-const getAllOriginUrl = (url) => {
+const getAllOriginResponse = (url) => {
   const originUrl = new URL('https://allorigins.hexlet.app/get');
   originUrl.searchParams.set('disableCache', 'true');
   originUrl.searchParams.set('url', url);
-  return originUrl;
+  return axios.get(originUrl);
+};
+
+const getHttpContents = (url) => getAllOriginResponse(url)
+  .then((response) => response.data.contents)
+  .catch(() => {
+    throw new Error('errors.networkErrors');
+  });
+
+const updatePosts = (state, timeout = 5000) => {
+  const iter = () => {
+    state.feeds.forEach(({ id, link }) => {
+      const currentLinks = state.posts.filter(({ idFeed }) => idFeed === id)
+        .map((post) => post.link);
+      const setPostsLinks = new Set(currentLinks);
+
+      getHttpContents(link)
+        .then(parserRSS)
+        .then(({ posts }) => posts.filter((post) => !setPostsLinks.has(post.link)))
+        .then((posts) => {
+          const postsID = idCounter(id, posts);
+          state.posts.push(...postsID);
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    });
+
+    setTimeout(iter, timeout);
+  };
+  setTimeout(iter, timeout);
 };
 
 export default () => {
@@ -73,7 +103,6 @@ export default () => {
       processError: null,
       errors: {},
     },
-    urls: new Set(),
     feeds: [],
     posts: [],
   };
@@ -101,34 +130,43 @@ export default () => {
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
+    const existingUrl = state.feeds.map(({ link }) => link);
     const schema = yup.string()
       .url()
-      .notOneOf([...state.urls]);
+      .notOneOf(existingUrl);
 
     const data = state.form.fields.input;
     schema.validate(data)
       .then((url) => {
         state.form.processState = 'sending';
-        axios.get(getAllOriginUrl(url))
-          .then((response) => {
-            const { feed, posts } = parserRSS(response.data.contents);
-            feed.id = getId();
-            const postsID = idCounter(feed.id, posts);
-            return { feed, posts: postsID };
-          })
-          .then(({ feed, posts }) => {
-            state.urls.add(url);
-            state.feeds.push(feed);
-            state.posts.push(...posts);
-          })
-          .then(() => {
-            state.form.processState = 'success';
-          })
-          .catch((error) => console.error(error));
+        return getHttpContents(url);
       })
+      .then(parserRSS)
+      .then(({ feed, posts }) => {
+        feed.link = state.form.fields.input;
+        feed.id = getId();
+        const postsID = idCounter(feed.id, posts);
+        return { feed, posts: postsID };
+      })
+      .then(({ feed, posts }) => {
+        state.feeds.push(feed);
+        state.posts.push(...posts);
+      })
+      .then(() => {
+        state.form.processState = 'success';
+      })
+      .then(() => updatePosts(state))
       .catch((error) => {
-        const message = error.errors.map((err) => i18nInstance.t(err.key));
+        let message;
+        if (!Array.isArray(error?.errors)) {
+          message = i18nInstance.t(error.message);
+        } else {
+          message = error.errors.map((err) => i18nInstance.t(err.key));
+        }
         state.form.errors = { message };
+      })
+      .finally(() => {
+        state.form.processState = 'filling';
       });
   });
 };
