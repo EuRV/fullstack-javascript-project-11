@@ -96,6 +96,11 @@ const processHandler = (elements, process, i18n) => {
       elements.submit.disabled = true;
       break;
 
+    case 'filling':
+      elements.input.disabled = false;
+      elements.submit.disabled = false;
+      break;
+
     default:
       break;
   }
