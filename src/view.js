@@ -36,7 +36,8 @@ const renderFeeds = (elements, i18n, feeds) => {
   feedsEl.append(card);
 };
 
-const renderPosts = (elements, i18n, posts) => {
+const renderPosts = (elements, i18n, posts, readPosts) => {
+  // console.log(posts);
   const postsEl = elements.rss.posts;
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
@@ -52,7 +53,8 @@ const renderPosts = (elements, i18n, posts) => {
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
     const a = document.createElement('a');
     a.setAttribute('href', `${post.link}`);
-    a.classList.add('fw-bold');
+    const className = readPosts.has(post.id) ? ['fw-normal', 'link-secondary'] : ['fw-bold'];
+    a.classList.add(...className);
     a.setAttribute('data-id', `${post.id}`);
     a.setAttribute('target', '_blank');
     a.setAttribute('rel', 'noopener noreferrer');
@@ -73,6 +75,10 @@ const renderPosts = (elements, i18n, posts) => {
   postsEl.innerHTML = '';
   postsEl.append(card);
 };
+
+// const renderModal = (elements, modal) => {
+
+// };
 
 const render = (elements, i18n) => {
   elements.input.classList.remove('is-invalid');
@@ -106,7 +112,7 @@ const processHandler = (elements, process, i18n) => {
   }
 };
 
-export const initView = (elements, i18n) => (path, value) => {
+export const initView = (elements, i18n, state) => (path, value) => {
   console.log(path, value);
   switch (path) {
     case 'form.errors':
@@ -122,7 +128,11 @@ export const initView = (elements, i18n) => (path, value) => {
       break;
 
     case 'posts':
-      renderPosts(elements, i18n, value);
+      renderPosts(elements, i18n, value, state.readPosts);
+      break;
+
+    case 'readPosts':
+      renderPosts(elements, i18n, state.posts, value);
       break;
 
     default:

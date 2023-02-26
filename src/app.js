@@ -103,6 +103,12 @@ export default () => {
       processError: null,
       errors: {},
     },
+    // modal: {
+    //   title: '',
+    //   description: '',
+    //   link: '',
+    // },
+    readPosts: new Set(),
     feeds: [],
     posts: [],
   };
@@ -118,13 +124,23 @@ export default () => {
 
   // View
   renderContent(elements, i18nInstance);
-  const state = onChange(initialState, initView(elements, i18nInstance));
+  const state = onChange(initialState, initView(elements, i18nInstance, initialState));
 
   // Controllers
   elements.input.addEventListener('input', (e) => {
     e.preventDefault();
     state.form.fields.input = e.target.value;
     state.processState = 'filling';
+  });
+
+  elements.rss.posts.addEventListener('click', (e) => {
+    const eventElement = e.target;
+    const postId = parseInt(eventElement.dataset.id, 10);
+    if (eventElement.dataset.bsTarget) {
+      const { title, description, link } = state.posts.find(({ id }) => id === postId);
+      state.modal = { title, description, link };
+    }
+    state.readPosts.add(postId);
   });
 
   elements.form.addEventListener('submit', (e) => {
