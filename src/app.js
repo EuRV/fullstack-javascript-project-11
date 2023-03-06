@@ -71,6 +71,15 @@ export default () => {
     input: document.getElementById('url-input'),
     submit: document.querySelector('button[aria-label="add"]'),
     feedback: document.querySelector('.feedback'),
+    rss: {
+      feeds: document.querySelector('.feeds'),
+      posts: document.querySelector('.posts'),
+    },
+    modal: {
+      title: document.querySelector('.modal-title'),
+      body: document.querySelector('.modal-body'),
+      footer: document.querySelector('.full-article'),
+    },
     content: {
       body: {
         h_one: document.querySelector('h1[class="display-3 mb-0"]'),
@@ -88,10 +97,6 @@ export default () => {
         div: document.querySelector('div[class="text-center"]'),
       },
     },
-    rss: {
-      feeds: document.querySelector('.feeds'),
-      posts: document.querySelector('.posts'),
-    },
   };
 
   const initialState = {
@@ -103,11 +108,11 @@ export default () => {
       processError: null,
       errors: {},
     },
-    // modal: {
-    //   title: '',
-    //   description: '',
-    //   link: '',
-    // },
+    modal: {
+      title: '',
+      description: '',
+      link: '',
+    },
     readPosts: new Set(),
     feeds: [],
     posts: [],
