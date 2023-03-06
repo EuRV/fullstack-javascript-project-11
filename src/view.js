@@ -61,7 +61,7 @@ const renderPosts = (elements, i18n, posts, readPosts) => {
     a.textContent = post.title;
     const button = document.createElement('button');
     button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-    button.setAttribute('type', 'button');
+    button.type = 'button';
     button.setAttribute('data-id', `${post.id}`);
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
@@ -72,13 +72,15 @@ const renderPosts = (elements, i18n, posts, readPosts) => {
 
   cardBody.append(cardTitle);
   card.append(cardBody, listGroop);
-  postsEl.innerHTML = '';
-  postsEl.append(card);
+  // postsEl.innerHTML = '';
+  postsEl.replaceChildren(card);
 };
 
-// const renderModal = (elements, modal) => {
-
-// };
+const renderModal = (elements, modal) => {
+  elements.title.textContent = modal.title;
+  elements.body.textContent = modal.description;
+  elements.footer.href = modal.link;
+};
 
 const render = (elements, i18n) => {
   elements.input.classList.remove('is-invalid');
@@ -113,7 +115,7 @@ const processHandler = (elements, process, i18n) => {
 };
 
 export const initView = (elements, i18n, state) => (path, value) => {
-  console.log(path, value);
+  // console.log(path, value);
   switch (path) {
     case 'form.errors':
       renderErrors(elements, value);
@@ -133,6 +135,10 @@ export const initView = (elements, i18n, state) => (path, value) => {
 
     case 'readPosts':
       renderPosts(elements, i18n, state.posts, value);
+      break;
+
+    case 'modal':
+      renderModal(elements.modal, value);
       break;
 
     default:
