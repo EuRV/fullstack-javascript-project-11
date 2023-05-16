@@ -16,8 +16,9 @@ export default {
         view: 'Просмотр',
       },
       footer: {
-        project_creator: 'Hexlet',
+        project_creator: 'Евгений Ровенский',
         project_text: 'created by',
+        project_link: 'https://github.com/EuRV/fullstack-javascript-project-11',
       },
     },
     errors: {
