@@ -6,6 +6,7 @@ import axios from 'axios';
 import { renderContent, initView } from './view.js';
 import resources from './locales/index.js';
 import parserXML from './utils/parser.js';
+import createDOM from './createDOM.js';
 
 let count = 0;
 
@@ -66,6 +67,7 @@ export default () => {
     resources,
   });
 
+  createDOM(i18nInstance);
   const elements = {
     form: document.querySelector('.rss-form'),
     input: document.getElementById('url-input'),
