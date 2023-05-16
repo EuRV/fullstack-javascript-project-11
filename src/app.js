@@ -5,7 +5,7 @@ import axios from 'axios';
 
 import { renderContent, initView } from './view.js';
 import resources from './locales/index.js';
-import parserRSS from './utils/parser.js';
+import parserXML from './utils/parser.js';
 
 let count = 0;
 
@@ -42,7 +42,7 @@ const updatePosts = (state, timeout = 5000) => {
       const setPostsLinks = new Set(currentLinks);
 
       getHttpContents(link)
-        .then(parserRSS)
+        .then(parserXML)
         .then(({ posts }) => posts.filter((post) => !setPostsLinks.has(post.link)))
         .then((posts) => {
           const postsID = idCounter(id, posts);
@@ -162,7 +162,7 @@ export default () => {
         state.form.processState = 'sending';
         return getHttpContents(url);
       })
-      .then(parserRSS)
+      .then(parserXML)
       .then(({ feed, posts }) => {
         feed.link = state.form.fields.input;
         feed.id = getId();
