@@ -158,9 +158,4 @@ export const renderContent = (elements, i18n) => {
     const element = value;
     element.textContent = i18n.t(`content.modal.${key}`);
   });
-
-  const { a } = footer;
-  a.textContent = i18n.t('content.footer.a');
-  footer.div.textContent = i18n.t('content.footer.div');
-  footer.div.append(a);
 };

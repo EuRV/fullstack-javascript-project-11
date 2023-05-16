@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import i18next from 'i18next';
 import axios from 'axios';
 
-import { renderContent, initView } from './view.js';
+import { initView } from './view.js';
 import resources from './locales/index.js';
 import parserXML from './utils/parser.js';
 import createDOM from './createDOM.js';
@@ -68,36 +68,14 @@ export default () => {
   });
 
   createDOM(i18nInstance);
+
   const elements = {
-    form: document.querySelector('.rss-form'),
-    input: document.getElementById('url-input'),
-    submit: document.querySelector('button[aria-label="add"]'),
-    feedback: document.querySelector('.feedback'),
-    rss: {
-      feeds: document.querySelector('.feeds'),
-      posts: document.querySelector('.posts'),
-    },
-    modal: {
-      title: document.querySelector('.modal-title'),
-      body: document.querySelector('.modal-body'),
-      footer: document.querySelector('.full-article'),
-    },
-    content: {
-      body: {
-        h_one: document.querySelector('h1[class="display-3 mb-0"]'),
-        p_lead: document.querySelector('p[class="lead"]'),
-        p_example: document.querySelector('p[class="mt-2 mb-0 text-muted"]'),
-        lable_url_input: document.querySelector('label[for="url-input"]'),
-        btn_primary: document.querySelector('button[aria-label="add"]'),
-      },
-      modal: {
-        btn_secondary: document.querySelector('button[class="btn btn-secondary"]'),
-        a_btn_primary: document.querySelector('a[class="btn btn-primary full-article"]'),
-      },
-      footer: {
-        a: document.querySelector('a[href$="11"]'),
-        div: document.querySelector('div[class="text-center"]'),
-      },
+    selectors: {
+      form: document.querySelector('form'),
+      p3: document.querySelector('.feedback'),
+      input: document.querySelector('input'),
+      divPosts: document.querySelector('.posts'),
+      divFeeds: document.querySelector('.feeds'),
     },
   };
 
@@ -130,7 +108,6 @@ export default () => {
   });
 
   // View
-  renderContent(elements, i18nInstance);
   const state = onChange(initialState, initView(elements, i18nInstance, initialState));
 
   // Controllers
