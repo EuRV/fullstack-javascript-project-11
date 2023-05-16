@@ -2,22 +2,22 @@ export default {
   translation: {
     content: {
       body: {
-        h_one: 'RSS агрегатор',
-        p_lead: 'Начните читать RSS сегодня! Это легко, это красиво.',
-        p_example: 'Пример: https://ru.hexlet.io/lessons.rss',
-        lable_url_input: 'Ссылка RSS',
-        btn_primary: 'Добавить',
+        name: 'RSS агрегатор',
+        nameNotice: 'Начните читать RSS сегодня! Это легко, это красиво.',
+        example: 'Пример: https://ru.hexlet.io/lessons.rss',
+        lable: 'Ссылка RSS',
+        submitButtonName: 'Добавить',
       },
       modal: {
-        btn_secondary: 'Закрыть',
-        a_btn_primary: 'Читать полностью',
-        feeds: 'Фиды',
-        posts: 'Посты',
-        btn_modal: 'Просмотр',
+        button_close: 'Закрыть',
+        button_read_full: 'Читать полностью',
+        feeds: 'Ленты',
+        posts: 'Новости',
+        view: 'Просмотр',
       },
       footer: {
-        a: 'Hexlet',
-        div: 'created by',
+        project_creator: 'Hexlet',
+        project_text: 'created by',
       },
     },
     errors: {
@@ -26,6 +26,7 @@ export default {
       successURL: 'RSS успешно загружен',
       networkErrors: 'Ошибка сети',
       noRSS: 'Ресурс не содержит валидный RSS',
+      not_null: 'Не должно быть пустым',
     },
   },
 };
