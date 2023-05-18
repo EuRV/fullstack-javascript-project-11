@@ -3,7 +3,7 @@ export default (page) => {
   const documentXML = parser.parseFromString(page, 'text/xml');
   const rootTagName = documentXML.documentElement.tagName.toLowerCase();
   if (rootTagName !== 'rss') {
-    throw new Error('errors.noRSS');
+    throw new Error('errors.errorParseRSS');
   }
 
   const titleChannel = documentXML.querySelector('channel > title').textContent;
