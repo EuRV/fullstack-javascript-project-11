@@ -1,20 +1,12 @@
-const renderErrors = (elements, errors) => {
-  const errorMessage = errors?.message;
-  elements.input.classList.add('is-invalid');
-  elements.feedback.classList.add('text-danger');
-  elements.feedback.classList.remove('text-success');
-  elements.feedback.textContent = errorMessage;
-};
-
 const renderFeeds = (elements, i18n, feeds) => {
-  const feedsEl = elements.rss.feeds;
+  const feedsEl = elements.divFeeds;
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
   const cardBody = document.createElement('div');
   cardBody.classList.add('card-body');
   const cardTitle = document.createElement('h2');
   cardTitle.classList.add('card-title', 'h4');
-  cardTitle.textContent = i18n.t('content.modal.feeds');
+  cardTitle.textContent = i18n.t('content.body.feeds');
   const listGroop = document.createElement('ul');
   listGroop.classList.add('list-group', 'border-0', 'rounded-0');
   feeds.forEach((feed) => {
@@ -37,15 +29,14 @@ const renderFeeds = (elements, i18n, feeds) => {
 };
 
 const renderPosts = (elements, i18n, posts, readPosts) => {
-  // console.log(posts);
-  const postsEl = elements.rss.posts;
+  const postsEl = elements.divPosts;
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
   const cardBody = document.createElement('div');
   cardBody.classList.add('card-body');
   const cardTitle = document.createElement('h2');
   cardTitle.classList.add('card-title', 'h4');
-  cardTitle.textContent = i18n.t('content.modal.posts');
+  cardTitle.textContent = i18n.t('content.body.posts');
   const listGroop = document.createElement('ul');
   listGroop.classList.add('list-group', 'border-0', 'rounded-0');
   posts.forEach((post) => {
@@ -65,7 +56,7 @@ const renderPosts = (elements, i18n, posts, readPosts) => {
     button.setAttribute('data-id', `${post.id}`);
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
-    button.textContent = i18n.t('content.modal.btn_modal');
+    button.textContent = i18n.t('content.body.view');
     li.append(a, button);
     listGroop.prepend(li);
   });
@@ -77,16 +68,27 @@ const renderPosts = (elements, i18n, posts, readPosts) => {
 };
 
 const renderModal = (elements, modal) => {
-  elements.title.textContent = modal.title;
-  elements.body.textContent = modal.description;
-  elements.footer.href = modal.link;
+  const modalTitle = elements.querySelector('.modal-title');
+  const modalBody = elements.querySelector('.modal-body');
+  const modalFooterHref = elements.querySelector('a');
+  modalTitle.textContent = modal.title;
+  modalBody.textContent = modal.description;
+  modalFooterHref.href = modal.link;
+};
+
+const renderErrors = (elements, errors) => {
+  const errorMessage = errors?.message;
+  elements.input.classList.add('is-invalid');
+  elements.feedback.classList.add('text-danger');
+  elements.feedback.classList.remove('text-success');
+  elements.feedback.textContent = errorMessage;
 };
 
 const render = (elements, i18n) => {
   elements.input.classList.remove('is-invalid');
   elements.feedback.classList.remove('text-danger');
   elements.feedback.classList.add('text-success');
-  elements.feedback.textContent = i18n.t('errors.successURL');
+  elements.feedback.textContent = i18n.t('content.body.successRSS');
 };
 
 const processHandler = (elements, process, i18n) => {
@@ -114,14 +116,13 @@ const processHandler = (elements, process, i18n) => {
   }
 };
 
-export const initView = (elements, i18n, state) => (path, value) => {
-  // console.log(path, value);
+export default (elements, state, i18n) => (path, value) => {
   switch (path) {
-    case 'form.errors':
+    case 'errors':
       renderErrors(elements, value);
       break;
 
-    case 'form.processState':
+    case 'processState':
       processHandler(elements, value, i18n);
       break;
 
@@ -144,18 +145,4 @@ export const initView = (elements, i18n, state) => (path, value) => {
     default:
       break;
   }
-};
-
-export const renderContent = (elements, i18n) => {
-  // console.log(Object.entries(elements.content))
-  const { body, modal, footer } = elements.content;
-  Object.entries(body).forEach(([key, value]) => {
-    const element = value;
-    element.textContent = i18n.t(`content.body.${key}`);
-  });
-
-  Object.entries(modal).forEach(([key, value]) => {
-    const element = value;
-    element.textContent = i18n.t(`content.modal.${key}`);
-  });
 };
