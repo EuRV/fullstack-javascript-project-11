@@ -5,10 +5,10 @@ export default (i18nextInstance) => {
   modalDiv.classList.add('modal', 'fade');
   modalDiv.setAttribute('id', 'modal');
   modalDiv.setAttribute('tabindex', '-1');
-  modalDiv.setAttribute('aria-labelledby', 'modal');
-  modalDiv.setAttribute('style', 'display: none;');
-  modalDiv.setAttribute('aria-hidden', 'true');
   modalDiv.setAttribute('role', 'dialog');
+  modalDiv.setAttribute('aria-labelledby', 'modal');
+  modalDiv.setAttribute('aria-hidden', 'true');
+  // modalDiv.setAttribute('style', 'display: none;');
   const modalDialogDiv = document.createElement('div');
   modalDialogDiv.classList.add('modal-dialog');
   modalDialogDiv.setAttribute('role', 'document');
@@ -27,10 +27,10 @@ export default (i18nextInstance) => {
   modalBody.classList.add('modal-body', 'text-break');
   const modalFooter = document.createElement('div');
   modalFooter.classList.add('modal-footer');
-  const modalFooterA = document.createElement('footerA');
+  const modalFooterA = document.createElement('a');
   modalFooterA.classList.add('btn', 'btn-primary', 'full-article');
-  modalFooterA.setAttribute('role', 'button');
   modalFooterA.setAttribute('href', '#');
+  modalFooterA.setAttribute('role', 'button');
   modalFooterA.setAttribute('target', '_blank');
   modalFooterA.setAttribute('rel', 'noopener noreferrer');
   modalFooterA.textContent = i18nextInstance.t('content.modal.button_read_full');
@@ -82,7 +82,7 @@ export default (i18nextInstance) => {
   inputSubmit.textContent = i18nextInstance.t('content.body.submitButtonName');
   inputSubmit.classList.add('h-100', 'btn', 'btn-lg', 'btn-primary', 'px-sm-5');
   const p2 = document.createElement('p');
-  p2.classList.add('mt-2', 'mb-0', 'text-secondary');
+  p2.classList.add('mt-2', 'mb-0', 'text-muted');
   p2.textContent = i18nextInstance.t('content.body.example');
   const p3 = document.createElement('p');
   p3.classList.add('feedback', 'm-0', 'position-absolute', 'small', 'text-danger');
