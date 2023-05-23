@@ -22,6 +22,30 @@ const getHttpContents = (url) => {
     });
 };
 
+const updatePosts = (state, timeout = 5000) => {
+  const iter = () => {
+    state.feeds.forEach(({ id, link }) => {
+      const currentLinks = state.posts.filter(({ feedId }) => feedId === id)
+        .map((post) => post.link);
+      const setPostsLinks = new Set(currentLinks);
+
+      getHttpContents(link)
+        .then(parserXML)
+        .then(({ posts }) => posts.filter((post) => !setPostsLinks.has(post.link)))
+        .then((posts) => {
+          const postsIds = posts.map((post) => ({ id: uniqueId(), feedId: id, ...post }));
+          state.posts.push(...postsIds);
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    });
+
+    setTimeout(iter, timeout);
+  };
+  setTimeout(iter, timeout);
+};
+
 export default (elements, state, i18n) => {
   yup.setLocale({
     mixed: {
@@ -45,7 +69,7 @@ export default (elements, state, i18n) => {
     const eventElement = e.target;
     const postId = eventElement.dataset.id;
     if (eventElement.dataset.bsTarget) {
-      const { title, description, link } = state.posts.find(({ id }) => id === postId);
+      const { title, description, link } = watchedState.posts.find(({ id }) => id === postId);
       watchedState.modal = { title, description, link };
     }
     watchedState.readPosts.add(postId);
@@ -71,6 +95,7 @@ export default (elements, state, i18n) => {
       .then(() => {
         watchedState.processState = 'success';
       })
+      .then(() => updatePosts(watchedState))
       .catch((error) => {
         const message = i18n.t(error.message);
         watchedState.errors = { message };
