@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/EuRV/fullstack-javascript-project-11/workflows/hexlet-check/badge.svg)](https://github.com/EuRV/fullstack-javascript-project-11/actions)",
   "main": "src/app.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,7 +18,11 @@
   },
   "homepage": "https://github.com/EuRV/fullstack-javascript-project-11#readme",
   "devDependencies": {
+    "@babel/core": "^7.21.8",
+    "@babel/eslint-parser": "^7.21.8",
+    "@babel/preset-env": "^7.21.5",
     "autoprefixer": "^10.4.13",
+    "babel-loader": "^9.1.2",
     "css-loader": "^6.7.3",
     "eslint": "^8.34.0",
     "eslint-config-airbnb-base": "^15.0.0",
